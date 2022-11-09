@@ -1,4 +1,4 @@
-from rest_framework import viewsets, validators, filters
+from rest_framework import viewsets, filters
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework import mixins
 from rest_framework import viewsets
@@ -57,18 +57,11 @@ class FollowCreateListViewSet(
     permission_classes = [IsAuthenticated]
     serializer_class = FollowSerializer
     filter_backends = [filters.SearchFilter]
-    search_fields = ('following__username', 'user__username',)
+    search_fields = ('following__username',)
 
     def get_queryset(self):
         user = self.request.user
         return Follow.objects.filter(user=user)
 
     def perform_create(self, serializer):
-        user = self.request.user
-        following = serializer.validated_data.get('following')
-        print(following)
-        queryset = Follow.objects.filter(user=self.request.user,
-                                         following=following)
-        if queryset.exists():
-            raise validators.ValidationError('Вы уже подписаны')
-        serializer.save(user=user)
+        serializer.save(user=self.request.user)
