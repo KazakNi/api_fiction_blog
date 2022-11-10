@@ -61,7 +61,7 @@ class FollowCreateListViewSet(
 
     def get_queryset(self):
         user = self.request.user
-        return Follow.objects.filter(user=user)
+        return user.follower.all()
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
